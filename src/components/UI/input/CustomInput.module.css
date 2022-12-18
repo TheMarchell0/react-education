@@ -1,0 +1,8 @@
+.customInput {
+  width: 100%;
+  border: 2px solid lightcoral;
+  max-width: 300px;
+  padding: 10px;
+  outline: none;
+  position: relative;
+}

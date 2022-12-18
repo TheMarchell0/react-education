@@ -1,0 +1,16 @@
+.customButton {
+  background: green;
+  color: white;
+  padding: 10px;
+  border: 1px solid black;
+  cursor: pointer;
+  transition: 0.3s linear;
+}
+
+.customButton:hover {
+  opacity: 0.8;
+}
+
+.customButton:disabled {
+  opacity: 0.1;
+}
