@@ -54,3 +54,10 @@ form {
 .posts__item:last-child {
   margin-bottom: 0;
 }
+
+.not-found {
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 20px;
+}

@@ -1,0 +1,11 @@
+.customSelect {
+  outline: none;
+  background: white;
+  padding: 10px;
+  border: 2px solid lightcoral;
+  margin-top: 10px;
+}
+
+/* .custom-select option:first-child {
+  display: none;
+} */
