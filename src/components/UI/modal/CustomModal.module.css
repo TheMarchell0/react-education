@@ -1,0 +1,24 @@
+.CustomModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: none;
+  background: rgba(0, 0, 0, 0.114);
+  z-index: 100;
+}
+
+.CustomModalContent {
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  max-width: 300px;
+  width: 100%;
+}
+
+.CustomModal.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

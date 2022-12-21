@@ -1,9 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import "./styles/style.css";
 import PostList from "./components/PostList";
 import CreateNewPost from "./components/CreateNewPost";
-import CustomSelect from "./components/UI/select/CustomSelect";
-import Search from "./components/Search";
+import Filter from "./components/Filter";
+import CustomModal from "./components/UI/modal/CustomModal";
+import CustomButton from "./components/UI/button/CustomButton";
+import { useSearchSortedContent } from "./components/hooks/usePosts";
 
 function App() {
   const [postsContent, setPostsContent] = useState([
@@ -23,22 +25,20 @@ function App() {
       description: "И это че",
     },
   ]); //Допустим, что получаем данные с бэка;
-  const [selectedSort, setSelectedSort] = useState("default");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState({ sort: "default", searchQuery: "" });
+  const searchSortedContent = useSearchSortedContent(
+    postsContent,
+    filter.sort,
+    filter.searchQuery
+  );
 
-  //Определение типа контента (обычного или отсортированного)
-  const sortPostsContent = useMemo(() => {
-    if (selectedSort !== "default") {
-      return [...postsContent].sort((a, b) =>
-        a[selectedSort].localeCompare(b[selectedSort])
-      );
-    }
-    return postsContent;
-  }, [selectedSort, postsContent]);
+  //Показ модального окна с добавлением поста
+  const [modalVisible, setModalVisible] = useState(false);
 
   //Создание поста
   const newPostFunc = (newPost) => {
     setPostsContent([...postsContent, newPost]);
+    setModalVisible(false);
   };
 
   //Удаление поста
@@ -49,42 +49,27 @@ function App() {
     setPostsContent(newPostContent);
   };
 
-  //Получение и смена стейта типа сортировки из customSelect.jsx (влияет на вывод контента)
-  const sortPosts = (sort) => {
-    setSelectedSort(sort);
-  };
-
-  //Вывод контента
-  const mainContent = () => {
-    switch (postsContent.length) {
-      case 0:
-        return <p className="not-found">Посты не найдены!</p>;
-      default:
-        return (
-          <PostList
-            posts={sortPostsContent}
-            removePostFunc={removePostFunc}
-            head={"Список постов"}
-          />
-        );
-    }
-  };
-
   return (
     <>
-      <CreateNewPost newPostFunc={newPostFunc} />
+      <CustomButton
+        style={{ margin: "10px 0" }}
+        onClick={() => setModalVisible(true)}
+      >
+        Создать пост
+      </CustomButton>
+      <CustomModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      >
+        <CreateNewPost newPostFunc={newPostFunc} />
+      </CustomModal>
       <hr />
-      <CustomSelect
-        defaultValue="По умолчанию"
-        selectedValue={selectedSort}
-        changeValue={sortPosts}
-        options={[
-          { value: "title", name: "По названию" },
-          { value: "description", name: "По описанию" },
-        ]}
+      <Filter filter={filter} setFilter={setFilter} />
+      <PostList
+        posts={searchSortedContent}
+        removePostFunc={removePostFunc}
+        head={"Список постов"}
       />
-      <Search searchValue={searchQuery} searchFunction={setSearchQuery} />
-      {mainContent()}
     </>
   );
 }
