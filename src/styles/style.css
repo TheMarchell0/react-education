@@ -47,6 +47,10 @@ form {
   font-weight: bold;
 }
 
+.posts__item-content {
+  margin-right: 20px;
+}
+
 .posts__item-head h2 {
   margin-left: 10px;
 }

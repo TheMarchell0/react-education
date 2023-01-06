@@ -3,15 +3,15 @@ import CustomButton from "./UI/button/CustomButton";
 import CustomInput from "./UI/input/CustomInput";
 
 function CreateNewPost({ newPostFunc }) {
-  const [newPost, setNewPost] = useState({ title: "", description: "" });
+  const [newPost, setNewPost] = useState({ title: "", body: "" });
 
   function addPost(e) {
     e.preventDefault();
-    if (newPost.title.length === 0 || newPost.description.length === 0) {
+    if (newPost.title.length === 0 || newPost.body.length === 0) {
       return;
     }
     newPostFunc({ id: Date.now(), ...newPost });
-    setNewPost({ title: "", description: "" });
+    setNewPost({ title: "", body: "" });
   }
 
   return (
@@ -26,10 +26,8 @@ function CreateNewPost({ newPostFunc }) {
       <CustomInput
         type="text"
         placeholder="Описание поста"
-        value={newPost.description}
-        onChange={(e) =>
-          setNewPost({ ...newPost, description: e.target.value })
-        }
+        value={newPost.body}
+        onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
       />
       <CustomButton onClick={addPost}>Добавить</CustomButton>
     </form>

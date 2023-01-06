@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles/style.css";
 import PostList from "./components/PostList";
 import CreateNewPost from "./components/CreateNewPost";
@@ -6,6 +6,7 @@ import Filter from "./components/Filter";
 import CustomModal from "./components/UI/modal/CustomModal";
 import CustomButton from "./components/UI/button/CustomButton";
 import { useSearchSortedContent } from "./components/hooks/usePosts";
+import PostService from "./API/PostService";
 
 function App() {
   const [postsContent, setPostsContent] = useState([
@@ -31,6 +32,15 @@ function App() {
     filter.sort,
     filter.searchQuery
   );
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    const posts = await PostService.getAll();
+    setPostsContent(posts);
+  };
 
   //Показ модального окна с добавлением поста
   const [modalVisible, setModalVisible] = useState(false);

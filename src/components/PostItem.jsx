@@ -9,7 +9,7 @@ const PostItem = ({ ...data }) => {
           <p>{data.number}.</p>
           <h2>{data.title}</h2>
         </div>
-        <p>{data.description}</p>
+        <p>{data.body}</p>
       </div>
       <CustomButton onClick={() => data.removePostFunc(data.id)}>
         Удалить
