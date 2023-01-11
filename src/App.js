@@ -7,26 +7,16 @@ import CustomModal from "./components/UI/modal/CustomModal";
 import CustomButton from "./components/UI/button/CustomButton";
 import { useSearchSortedContent } from "./components/hooks/usePosts";
 import PostService from "./API/PostService";
+import Loader from "./components/UI/loader/Loader";
+import { useFetching } from "./components/hooks/useFetching";
 
 function App() {
-  const [postsContent, setPostsContent] = useState([
-    {
-      id: 1,
-      title: "JavaScript",
-      description: "Че это",
-    },
-    {
-      id: 2,
-      title: "HTML",
-      description: "А это че",
-    },
-    {
-      id: 3,
-      title: "CSS",
-      description: "И это че",
-    },
-  ]); //Допустим, что получаем данные с бэка;
+  const [postsContent, setPostsContent] = useState([]);
   const [filter, setFilter] = useState({ sort: "default", searchQuery: "" });
+  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPostsContent(posts);
+  });
   const searchSortedContent = useSearchSortedContent(
     postsContent,
     filter.sort,
@@ -36,11 +26,6 @@ function App() {
   useEffect(() => {
     fetchPosts();
   }, []);
-
-  const fetchPosts = async () => {
-    const posts = await PostService.getAll();
-    setPostsContent(posts);
-  };
 
   //Показ модального окна с добавлением поста
   const [modalVisible, setModalVisible] = useState(false);
@@ -75,11 +60,16 @@ function App() {
       </CustomModal>
       <hr />
       <Filter filter={filter} setFilter={setFilter} />
-      <PostList
-        posts={searchSortedContent}
-        removePostFunc={removePostFunc}
-        head={"Список постов"}
-      />
+      {postError && <h1>Произошла ошибка - {postError}</h1>}
+      {isPostsLoading ? (
+        <Loader />
+      ) : (
+        <PostList
+          posts={searchSortedContent}
+          removePostFunc={removePostFunc}
+          head={"Список постов"}
+        />
+      )}
     </>
   );
 }
