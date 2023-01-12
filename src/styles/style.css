@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-#root {
+.main {
   max-width: 700px;
   width: 100%;
   margin: 0 auto;
@@ -37,7 +37,6 @@ form {
 
 .posts__item-head {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
@@ -98,4 +97,22 @@ form {
   border: 2px solid lightcoral;
   background: rgba(128, 128, 128, 0.34);
   font-weight: bold;
+}
+
+.navbar {
+  width: 100vw;
+  height: 100px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  background-color: lightcoral;
+}
+
+.navbar__item {
+  margin-right: 10px;
+  margin-left: auto;
+}
+
+.navbar__item:last-child {
+  margin-right: 0;
 }
