@@ -50,6 +50,11 @@ form {
   margin-right: 20px;
 }
 
+.posts__item-btns {
+  display: flex;
+  align-items: center;
+}
+
 .posts__item-head h2 {
   margin-left: 10px;
 }

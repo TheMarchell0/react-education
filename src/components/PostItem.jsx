@@ -11,9 +11,14 @@ const PostItem = ({ ...data }) => {
         </div>
         <p>{data.body}</p>
       </div>
-      <CustomButton onClick={() => data.removePostFunc(data.id)}>
-        Удалить
-      </CustomButton>
+      <div className="posts__item-btns">
+        <CustomButton onClick={() => data.removePostFunc(data.id)}>
+          Открыть
+        </CustomButton>
+        <CustomButton onClick={() => data.removePostFunc(data.id)}>
+          Удалить
+        </CustomButton>
+      </div>
     </li>
   );
 };
