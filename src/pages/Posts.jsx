@@ -10,8 +10,11 @@ import Loader from "../components/UI/loader/Loader";
 import { useFetching } from "../components/hooks/useFetching";
 import getPagesCount from "../utils/pages";
 import Pagination from "../components/UI/pagination/Pagination";
+import { useObserver } from "../components/hooks/useObserver";
+import CustomSelect from "../components/UI/select/CustomSelect";
 
 function Posts() {
+  const lastElement = useRef();
   const [postsContent, setPostsContent] = useState([]);
   const [filter, setFilter] = useState({ sort: "default", searchQuery: "" });
   const [modalVisible, setModalVisible] = useState(false);
@@ -42,31 +45,23 @@ function Posts() {
     filter.searchQuery
   );
 
-  const lastElement = useRef();
-  const observer = useRef();
-
-  useEffect(() => {
-    if (isPostsLoading) return;
-    if (observer.current) observer.current.disconnect();
-    let callback = function (entries, observer) {
-      if (
-        entries[0].isIntersecting &&
-        paginationInfo.page < paginationInfo.count
-      ) {
-        setPaginationInfo({
-          ...paginationInfo,
-          page: paginationInfo.page + 1,
-        });
-      }
-    };
-    observer.current = new IntersectionObserver(callback);
-    observer.current.observe(lastElement.current);
-  }, [isPostsLoading]);
+  //Ставим Observer, когда юзер долистал до конца страницы, чтобы подгрузить новые посты бесконечной ленты
+  useObserver(
+    lastElement,
+    paginationInfo.page < paginationInfo.count,
+    isPostsLoading,
+    () => {
+      setPaginationInfo({
+        ...paginationInfo,
+        page: paginationInfo.page + 1,
+      });
+    }
+  );
 
   //Получение постов с бэка при первичном рендере
   useEffect(() => {
     fetchPosts();
-  }, [paginationInfo.page]);
+  }, [paginationInfo.page, paginationInfo.limit]);
 
   //Создание поста
   const newPostFunc = (newPost) => {
@@ -105,15 +100,24 @@ function Posts() {
       <Filter filter={filter} setFilter={setFilter} />
       {postError && <h1>Произошла ошибка - {postError}</h1>}
       {isPostsLoading && <Loader />}
+      <CustomSelect
+        value={paginationInfo.limit}
+        changeValue={(value) =>
+          setPaginationInfo({ ...paginationInfo, limit: value })
+        }
+        options={[
+          { value: 5, name: "5" },
+          { value: 10, name: "10" },
+          { value: 25, name: "25" },
+          { value: -1, name: "Показать всё" },
+        ]}
+      ></CustomSelect>
       <PostList
         posts={searchSortedContent}
         removePostFunc={removePostFunc}
         head={"Список постов"}
       />
-      <div
-        ref={lastElement}
-        style={{ height: 20, backgroundColor: "red" }}
-      ></div>
+      <div ref={lastElement} style={{ height: 20 }}></div>
       <Pagination
         page={paginationInfo.page}
         changePage={changePage}
