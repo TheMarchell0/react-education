@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PostList from "../components/PostList";
 import CreateNewPost from "../components/CreateNewPost";
 import Filter from "../components/Filter";
@@ -25,7 +25,7 @@ function Posts() {
       paginationInfo.limit,
       paginationInfo.page
     );
-    setPostsContent(posts.data);
+    setPostsContent([...postsContent, ...posts.data]);
     const currentCount = getPagesCount(
       posts.headers["x-total-count"],
       paginationInfo.limit
@@ -41,6 +41,27 @@ function Posts() {
     filter.sort,
     filter.searchQuery
   );
+
+  const lastElement = useRef();
+  const observer = useRef();
+
+  useEffect(() => {
+    if (isPostsLoading) return;
+    if (observer.current) observer.current.disconnect();
+    let callback = function (entries, observer) {
+      if (
+        entries[0].isIntersecting &&
+        paginationInfo.page < paginationInfo.count
+      ) {
+        setPaginationInfo({
+          ...paginationInfo,
+          page: paginationInfo.page + 1,
+        });
+      }
+    };
+    observer.current = new IntersectionObserver(callback);
+    observer.current.observe(lastElement.current);
+  }, [isPostsLoading]);
 
   //Получение постов с бэка при первичном рендере
   useEffect(() => {
@@ -83,15 +104,16 @@ function Posts() {
       <hr />
       <Filter filter={filter} setFilter={setFilter} />
       {postError && <h1>Произошла ошибка - {postError}</h1>}
-      {isPostsLoading ? (
-        <Loader />
-      ) : (
-        <PostList
-          posts={searchSortedContent}
-          removePostFunc={removePostFunc}
-          head={"Список постов"}
-        />
-      )}
+      {isPostsLoading && <Loader />}
+      <PostList
+        posts={searchSortedContent}
+        removePostFunc={removePostFunc}
+        head={"Список постов"}
+      />
+      <div
+        ref={lastElement}
+        style={{ height: 20, backgroundColor: "red" }}
+      ></div>
       <Pagination
         page={paginationInfo.page}
         changePage={changePage}
